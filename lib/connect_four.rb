@@ -4,17 +4,19 @@ require 'connect_four/exceptions/invalid_column_error'
 
 class ConnectFour
 
+  EMPTY_CELL = '-'
   DEFAULT_COLUMNS = 7
   DEFAULT_ROWS = 6
 
-  attr_accessor :board
+  attr_accessor :board, :winner
+
 
   def initialize(board)
     @board = board
   end
 
   def self.build(columns = DEFAULT_COLUMNS, rows = DEFAULT_ROWS)
-    ConnectFour.new(columns.times.map {Array.new(rows)})
+    ConnectFour.new(columns.times.map {Array.new(rows, EMPTY_CELL)})
   end
 
   # column - Valid values between 1 and DEFAULT_COLUMNS
@@ -30,22 +32,45 @@ class ConnectFour
     else
       raise InvalidColumnError
     end
+
+    #verify if there is a winner store who it was
+    unless finished?
+      check_for_winner(player)
+    end
+  end
+
+  def finished?
+    !winner.nil?
   end
 
   private
 
+    def check_for_winner(player)
+      if has_row_win_condition?(player.disc)
+        @winner = player
+      end
+    end
+
+    def has_row_win_condition?(disc)
+      winnning_string = disc * 4
+      @board.transpose.each do |row|
+        if row.join.include?(winnning_string)
+          return true
+        end
+      end
+      false
+    end
+
     def column_full?(column)
-      !@board[column][0].nil?
+      @board[column][0] != EMPTY_CELL
     end
 
     def next_free_row(column)
-      @board[column].rindex(nil)
+      @board[column].rindex(EMPTY_CELL)
     end
 
     def valid_column?(column)
       column.between?(1, DEFAULT_COLUMNS)
     end
 
-
 end
-

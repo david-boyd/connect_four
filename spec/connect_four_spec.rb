@@ -16,15 +16,48 @@ RSpec.describe ConnectFour do
   end
 
   it 'prevents invalid column choice' do
-    # out of range
+    #out of range
     expect {game.drop_disc(0, player_1)}.to raise_error(InvalidColumnError)
     expect {game.drop_disc(ConnectFour::DEFAULT_COLUMNS + 1, player_1)}.to raise_error(InvalidColumnError)
 
-    # column already full
-    1..ConnectFour::DEFAULT_ROWS.times do |x|
+    #column already full
+    1..ConnectFour::DEFAULT_ROWS.times do
       game.drop_disc(4, player_1)
     end
     expect {game.drop_disc(4, player_1)}.to raise_error(ColumnFullError)
+  end
+
+  it 'verifies row win conditions' do
+    expect(game.finished?).to be_falsey
+    #drop first three discs
+    (1..3).each do |column|
+      game.drop_disc(column, player_1)
+    end
+    #drop final disc
+    expect(game.finished?).to be_falsey
+    game.drop_disc(4, player_1)
+    expect(game.finished?).to be_truthy
+    #expect winner recorded
+    expect(game.winner).to eq(player_1)
+
+    #test other column
+    game = ConnectFour.build
+    expect(game.finished?).to be_falsey
+    (2..5).each {|column| game.drop_disc(column, player_1)}
+    expect(game.finished?).to be_truthy
+
+    game = ConnectFour.build
+    (3..6).each {|column| game.drop_disc(column, player_1)}
+    expect(game.finished?).to be_truthy
+
+    #test four must be in a row
+    game = ConnectFour.build
+    game.drop_disc(1, player_1)
+    game.drop_disc(3, player_1)
+    game.drop_disc(4, player_1)
+    game.drop_disc(5, player_1)
+    expect(game.finished?).to be_falsey
+
   end
 
   def verify_disc(game, column, row, disc)
