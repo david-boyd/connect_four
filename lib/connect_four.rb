@@ -17,19 +17,35 @@ class ConnectFour
     ConnectFour.new(columns.times.map {Array.new(rows)})
   end
 
+  # column - Valid values between 1 and DEFAULT_COLUMNS
+  # player - player who has taken turn
   def drop_disc(column, player)
-    raise InvalidColumnError unless column.between?(1, DEFAULT_COLUMNS)
-    column = column - 1
-    index = next_free_cell(@board[column])
-    raise ColumnFullError if index.nil?
-    @board[column][index] = player.disc
+    if valid_column?(column)
+      column -= 1 #subtract one for array index
+      unless column_full?(column)
+        @board[column][next_free_row(column)] = player.disc
+      else
+        raise ColumnFullError
+      end
+    else
+      raise InvalidColumnError
+    end
   end
 
   private
 
-    def next_free_cell(column)
-      column.rindex(nil)
+    def column_full?(column)
+      !@board[column][0].nil?
     end
+
+    def next_free_row(column)
+      @board[column].rindex(nil)
+    end
+
+    def valid_column?(column)
+      column.between?(1, DEFAULT_COLUMNS)
+    end
+
 
 end
 
