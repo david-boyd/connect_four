@@ -46,14 +46,18 @@ class ConnectFour
   private
 
     def check_for_winner(player)
-      if has_row_win_condition?(player.disc)
+      if has_row_win_condition?(player.disc) || has_column_win_condition?(player.disc)
         @winner = player
       end
     end
 
     def has_row_win_condition?(disc)
+      has_column_win_condition?(disc,@board.transpose)
+    end
+
+    def has_column_win_condition?(disc, board = @board)
       winnning_string = disc * 4
-      @board.transpose.each do |row|
+      board.transpose.each do |row|
         if row.join.include?(winnning_string)
           return true
         end

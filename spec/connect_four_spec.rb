@@ -57,7 +57,18 @@ RSpec.describe ConnectFour do
     game.drop_disc(4, player_1)
     game.drop_disc(5, player_1)
     expect(game.finished?).to be_falsey
+  end
 
+  it 'verifies column win conditions' do
+    expect(game.finished?).to be_falsey
+    #drop first three discs
+    3.times {game.drop_disc(3, player_1)}
+    #drop final disc
+    expect(game.finished?).to be_falsey
+    game.drop_disc(3, player_1)
+    expect(game.finished?).to be_truthy
+    #expect winner recorded
+    expect(game.winner).to eq(player_1)
   end
 
   def verify_disc(game, column, row, disc)
