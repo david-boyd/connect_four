@@ -4,7 +4,7 @@ RSpec.describe ConnectFour do
   let(:player_1) {Player.new('0')}
   let(:player_2) {Player.new('X')}
 
-  it "create new game, with 6 columns and 7 rows" do
+  it 'create new game, with 6 columns and 7 rows' do
     expect(game.board).to_not be_nil
     expect(game.board.length).to eq(7)
     expect(game.board[0].length).to eq(6)
@@ -27,48 +27,76 @@ RSpec.describe ConnectFour do
     expect {game.drop_disc(4, player_1)}.to raise_error(ColumnFullError)
   end
 
-  it 'verifies row win conditions' do
-    expect(game.finished?).to be_falsey
-    #drop first three discs
-    (1..3).each do |column|
-      game.drop_disc(column, player_1)
+  context 'verifies row win conditions' do
+    it 'single player' do
+      expect(game.finished?).to be_falsey
+      #drop first three discs
+      (1..3).each do |column|
+        game.drop_disc(column, player_1)
+      end
+      #drop final disc
+      expect(game.finished?).to be_falsey
+      game.drop_disc(4, player_1)
+      expect(game.finished?).to be_truthy
+      #expect winner recorded
+      expect(game.winner).to eq(player_1)
+
+      #test other column
+      game = ConnectFour.build
+      expect(game.finished?).to be_falsey
+      (2..5).each {|column| game.drop_disc(column, player_1)}
+      expect(game.finished?).to be_truthy
+
+      game = ConnectFour.build
+      (3..6).each {|column| game.drop_disc(column, player_1)}
+      expect(game.finished?).to be_truthy
+
+      #test four must be in a row
+      game = ConnectFour.build
+      game.drop_disc(1, player_1)
+      game.drop_disc(3, player_1)
+      game.drop_disc(4, player_1)
+      game.drop_disc(5, player_1)
+      expect(game.finished?).to be_falsey
     end
-    #drop final disc
-    expect(game.finished?).to be_falsey
-    game.drop_disc(4, player_1)
-    expect(game.finished?).to be_truthy
-    #expect winner recorded
-    expect(game.winner).to eq(player_1)
 
-    #test other column
-    game = ConnectFour.build
-    expect(game.finished?).to be_falsey
-    (2..5).each {|column| game.drop_disc(column, player_1)}
-    expect(game.finished?).to be_truthy
-
-    game = ConnectFour.build
-    (3..6).each {|column| game.drop_disc(column, player_1)}
-    expect(game.finished?).to be_truthy
-
-    #test four must be in a row
-    game = ConnectFour.build
-    game.drop_disc(1, player_1)
-    game.drop_disc(3, player_1)
-    game.drop_disc(4, player_1)
-    game.drop_disc(5, player_1)
-    expect(game.finished?).to be_falsey
+    it 'two players' do
+      game.drop_disc(1, player_1)
+      game.drop_disc(2, player_2)
+      game.drop_disc(3, player_1)
+      game.drop_disc(4, player_1)
+      expect(game.finished?).to be_falsey
+      game.drop_disc(5, player_1)
+      game.drop_disc(6, player_1)
+      expect(game.finished?).to be_truthy
+      expect(game.winner).to eq(player_1)
+    end
   end
 
-  it 'verifies column win conditions' do
-    expect(game.finished?).to be_falsey
-    #drop first three discs
-    3.times {game.drop_disc(3, player_1)}
-    #drop final disc
-    expect(game.finished?).to be_falsey
-    game.drop_disc(3, player_1)
-    expect(game.finished?).to be_truthy
-    #expect winner recorded
-    expect(game.winner).to eq(player_1)
+  context 'verifies column win conditions' do
+    it 'single player' do
+      expect(game.finished?).to be_falsey
+      #drop first three discs
+      3.times {game.drop_disc(3, player_1)}
+      #drop final disc
+      expect(game.finished?).to be_falsey
+      game.drop_disc(3, player_1)
+      expect(game.finished?).to be_truthy
+      #expect winner recorded
+      expect(game.winner).to eq(player_1)
+    end
+
+    it 'two players' do
+      game.drop_disc(1, player_2)
+      game.drop_disc(1, player_1)
+      game.drop_disc(1, player_2)
+      game.drop_disc(1, player_2)
+      expect(game.finished?).to be_falsey
+      game.drop_disc(1, player_2)
+      game.drop_disc(1, player_2)
+      expect(game.finished?).to be_truthy
+      expect(game.winner).to eq(player_2)
+    end
   end
 
   def verify_disc(game, column, row, disc)
