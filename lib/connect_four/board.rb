@@ -1,5 +1,7 @@
 require_relative 'exceptions/column_full_error'
 require_relative 'exceptions/invalid_column_error'
+require_relative 'diagonal_parser/backward_diagonal_parser'
+require_relative 'diagonal_parser/forward_diagonal_parser'
 
 class Board
 
@@ -38,7 +40,7 @@ class Board
   private
 
     def check_win?(disc)
-      has_row_win_condition?(disc) || has_column_win_condition?(disc)
+      has_row_win_condition?(disc) || has_column_win_condition?(disc) || has_diagonal_win_condition?(disc)
     end
 
     def has_column_win_condition?(disc, board = @grid)
@@ -53,6 +55,11 @@ class Board
 
     def has_row_win_condition?(disc)
       has_column_win_condition?(disc, @grid.transpose)
+    end
+
+    def has_diagonal_win_condition?(disc)
+      diagonal_columns = ForwardDiagonalParser.new(@grid).parse(@discs_to_win) + BackwardDiagonalParser.new(@grid).parse(@discs_to_win)
+      has_column_win_condition?(disc, diagonal_columns)
     end
 
     def column_full?(column)
