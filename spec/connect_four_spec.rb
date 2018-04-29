@@ -58,6 +58,7 @@ RSpec.describe ConnectFour do
       expect(human).to receive(:get_move).once {1}
       expect(computer).to receive(:get_move).once {1}
       #final winner is the human which will end the game
+      allow(mock_board).to receive_message_chain(:winner,:name) {"You"}
       expect(mock_board).to receive(:winner).and_return(nil, human)
       @game.start(mock_prompt)
     end
