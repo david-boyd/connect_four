@@ -13,15 +13,18 @@ class Board
     @discs_to_win = discs_to_win
     @max_columns = columns
     @max_rows = rows
+    # creating grid with columns then rows, this makes it easier to when adding disc
+    # simply need to traverse down the 'column'
     @grid = columns.times.map {Array.new(rows, EMPTY_CELL)}
   end
 
   # column - Valid values between 1 and @max_columns
   # player - player who has taken turn
   def drop_disc(column, player)
+    column = column.to_i
     if valid_column?(column)
-      column -= 1 #subtract one for array index
       if !column_full?(column)
+        column -= 1 #subtract one for array index
         next_free_row = @grid[column].rindex(EMPTY_CELL)
         @grid[column][next_free_row] = player.disc
       else
@@ -37,6 +40,17 @@ class Board
     end
   end
 
+
+  def valid_columns
+    non_full_columns = []
+    (1..max_columns).each do |x|
+      unless column_full?(x)
+        non_full_columns << x
+      end
+    end
+    non_full_columns
+  end
+
   private
 
     def check_win?(disc)
@@ -44,9 +58,9 @@ class Board
     end
 
     def has_column_win_condition?(disc, board = @grid)
-      winnning_string = disc * @discs_to_win
+      winning_string = disc * @discs_to_win
       board.each do |row|
-        if row.join.include?(winnning_string)
+        if row.join.include?(winning_string)
           return true
         end
       end
@@ -63,7 +77,7 @@ class Board
     end
 
     def column_full?(column)
-      @grid[column][0] != EMPTY_CELL
+      @grid[(column - 1)][0] != EMPTY_CELL
     end
 
     def valid_column?(column)

@@ -1,7 +1,8 @@
-require 'connect_four/player'
-require 'connect_four/board'
-require 'connect_four/human'
-require 'connect_four/computer'
+require_relative 'connect_four/player'
+require_relative 'connect_four/board'
+require_relative 'connect_four/human'
+require_relative 'connect_four/computer'
+require 'tty-table'
 
 class ConnectFour
 
@@ -29,28 +30,41 @@ class ConnectFour
     end
   end
 
-  def start
+  def start(prompt)
     if has_two_players?
       current_player = coin_flip
-
+      prompt.say("#{current_player.class} goes first")
       loop do
-        current_player.get_move
+        valid_columns = @board.valid_columns
+        if valid_columns.empty?
+          raise "Game over, stalemate!"
+        end
+        column = current_player.get_move(valid_columns)
+        @board.drop_disc(column, current_player)
         current_player = swap_players(current_player)
+        prompt.say(render_board)
         break if finished?
       end
     else
       raise 'Connect Four needs two players to start'
     end
+    prompt.say("Game over #{@board.winner.class} won!!") unless @board.winner.nil?
   end
 
   private
+
+    def render_board
+      table_header = (1..@board.max_columns).to_a
+      table = TTY::Table.new(table_header, @board.grid.transpose)
+      table.render(:ascii)
+    end
 
     def has_two_players?
       !@player1.nil? && !@player2.nil?
     end
 
     def coin_flip
-      Random.rand(1) == 0 ? @player1 : @player2
+      Random.rand(2) == 0 ? @player1 : @player2
     end
 
     def swap_players(player)
@@ -60,5 +74,4 @@ class ConnectFour
     def finished?
       !@board.winner.nil?
     end
-
 end

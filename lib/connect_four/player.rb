@@ -1,7 +1,8 @@
 class Player
-  attr_accessor :disc
+  attr_accessor :disc, :prompt
 
-  def initialize(disc)
+  def initialize(disc, prompt = nil)
     @disc = disc
+    @prompt = prompt
   end
 end

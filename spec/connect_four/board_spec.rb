@@ -111,21 +111,6 @@ RSpec.describe Board do
       board.drop_disc(4, player_2)
       expect(board.winner).to eq(player_2)
     end
-
-    it 'right to left diagonal' do
-      #fill in non winning disc's
-      3.times {board.drop_disc(2, player_1)}
-      board.drop_disc(2, player_2)
-      3.times {board.drop_disc(3, player_2)}
-      2.times {board.drop_disc(4, player_1)}
-      board.drop_disc(4, player_1)
-      expect(board.winner).to be_nil
-      board.drop_disc(2, player_1)
-      board.drop_disc(3, player_1)
-      board.drop_disc(4, player_1)
-      board.drop_disc(4, player_1)
-      expect(board.winner).to eq(player_1)
-    end
   end
 
   def verify_disc(board, column, row, disc)

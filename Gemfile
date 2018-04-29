@@ -1,4 +1,4 @@
 source "https://rubygems.org"
 
 gem 'rspec', '~> 3.4'
-gem 'tty-table', '~> 0.8.0'
+gem 'tty', '~> 0.7.0'
