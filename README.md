@@ -1,10 +1,10 @@
-# Project Title
+# Connect Four
 
 Programming Challenge - Connect Four Game.
 
 This is a basic console Connect Four game built in ruby using TDD.
 
-######NOTE: The computer player is dumb, it simply picks a column at random.
+*NOTE: The computer player is dumb, it simply picks a column at random.*
 
 
 ### Installing
