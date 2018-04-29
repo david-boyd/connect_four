@@ -48,7 +48,7 @@ class ConnectFour
     else
       raise 'Connect Four needs two players to start'
     end
-    prompt.say("Game over #{@board.winner.class} won!!") unless @board.winner.nil?
+    prompt.say("Game over #{@board.winner.name} won!!") unless @board.winner.nil?
   end
 
   private

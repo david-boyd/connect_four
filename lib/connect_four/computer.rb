@@ -23,6 +23,9 @@ class Computer < Player
     spinner.auto_spin # Automatic animation with default interval
     sleep(2) # Perform task
     spinner.stop('Done!') # Stop animation
+  end
 
+  def name
+    "The Computer"
   end
 end

@@ -5,4 +5,7 @@ class Player
     @disc = disc
     @prompt = prompt
   end
+  def name
+    "You"
+  end
 end

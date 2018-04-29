@@ -40,7 +40,6 @@ class Board
     end
   end
 
-
   def valid_columns
     non_full_columns = []
     (1..max_columns).each do |x|
